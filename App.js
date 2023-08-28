@@ -1,24 +1,36 @@
-import { StatusBar } from 'expo-status-bar'
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { NavigationContainer } from '@react-navigation/native'
+import React from 'react'
+import { ActivityIndicator, View, StyleSheet } from 'react-native'
+
+import Tabs from './src/components/Tabs'
+import ErrorItem from './src/components/ErrorItem'
+import { useGetWeather } from './src/hooks/useGetWeather'
 
 export default function App() {
+  const [loading, error, weather] = useGetWeather()
+
+  if (weather && weather.list && !loading) {
+    return (
+      <NavigationContainer>
+        <Tabs weather={weather} />
+      </NavigationContainer>
+    )
+  }
+
   return (
-    <SafeAreaView style={styles.wrapper}>
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <StatusBar style="auto" />
-      </View>
-    </SafeAreaView>
+    <View style={styles.container}>
+      {error ? (
+        <ErrorItem />
+      ) : (
+        <ActivityIndicator size={'large'} color={'red'} />
+      )}
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1
-  },
   container: {
-    flex: 1,
-    backgroundColor: 'pink',
-    alignItems: 'center'
+    justifyContent: 'center',
+    flex: 1
   }
 })
